@@ -1,6 +1,6 @@
 # links_landing_page
 
-A new Flutter project.
+Full tutorial on creating your own links landing page, with Firebase services (Firestore, storage and authentication). Work in the progress. Sign up your interest for the Full Flutter Web with Firebase Udemy Course [here](https://docs.google.com/forms/d/e/1FAIpQLSf-IDkKZ-pwtaVBiVapInWxw1eM-fzOzw5iJSSVxcty-wUWzA/viewform?usp=sf_link).
 
 ## Getting Started
 
