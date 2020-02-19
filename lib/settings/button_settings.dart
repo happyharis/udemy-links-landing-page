@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:links_landing_page/models/links.dart';
 import 'package:links_landing_page/settings/add_button.dart';
+import 'package:links_landing_page/settings/delete_button.dart';
+import 'package:links_landing_page/settings/edit_button.dart';
 import 'package:provider/provider.dart';
 
 class ButtonSettings extends StatelessWidget {
@@ -45,14 +47,8 @@ class ButtonSettings extends StatelessWidget {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {},
-                            )
+                            EditButton(data: data),
+                            DeleteButton(data: data),
                           ],
                         ),
                       )
