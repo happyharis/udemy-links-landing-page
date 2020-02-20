@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:links_landing_page/landing_page.dart';
 import 'package:links_landing_page/models/links.dart';
@@ -6,9 +7,18 @@ import 'package:links_landing_page/settings/page.dart';
 import 'package:provider/provider.dart';
 
 final dummyData = [
-  {'title': 'Udemy', 'url': 'https://www.udemy.com', 'position': 1},
-  {'title': 'LinkedIn', 'url': 'https://www.linkedin.com', 'position': 2},
-  {'title': 'Facebook', 'url': 'https://www.facebook.com', 'position': 3},
+  {
+    'title': 'Udemy',
+    'url': 'https://www.udemy.com',
+  },
+  {
+    'title': 'LinkedIn',
+    'url': 'https://www.linkedin.com',
+  },
+  {
+    'title': 'Facebook',
+    'url': 'https://www.facebook.com',
+  },
 ];
 
 void main() => runApp(MyApp());
@@ -16,9 +26,18 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final userLinks = dummyData.map((data) => Link.fromMap(data)).toList();
-    return Provider<List<Link>>(
-      create: (_) => userLinks,
+    final linksCollection = Firestore.instance.collection('links');
+    final userLinks = linksCollection.snapshots().map((snapshot) {
+      return snapshot.documents.map((doc) => Link.fromDocument(doc)).toList();
+    });
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<Link>>(
+          create: (_) => userLinks,
+          initialData: [],
+        ),
+        Provider<CollectionReference>(create: (_) => linksCollection)
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

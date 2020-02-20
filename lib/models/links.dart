@@ -1,45 +1,43 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Link {
   final String url;
   final String title;
-  final int position;
+  final String documentID;
 
   Link({
     this.url,
     this.title,
-    this.position,
+    this.documentID,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'url': url,
       'title': title,
-      'position': position,
     };
   }
 
-  static Link fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+  static Link fromDocument(DocumentSnapshot document) {
+    if (document == null || document.data == null) return null;
 
     return Link(
-      url: map['url'],
-      title: map['title'],
-      position: map['position'],
+      documentID: document.documentID,
+      url: document.data['url'],
+      title: document.data['title'],
     );
   }
 
   @override
-  String toString() => 'Link url: $url, title: $title, position: $position';
+  String toString() => 'Link url: $url, title: $title';
 
   @override
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
 
-    return o is Link &&
-        o.url == url &&
-        o.title == title &&
-        o.position == position;
+    return o is Link && o.url == url && o.title == title;
   }
 
   @override
-  int get hashCode => url.hashCode ^ title.hashCode ^ position.hashCode;
+  int get hashCode => url.hashCode ^ title.hashCode;
 }

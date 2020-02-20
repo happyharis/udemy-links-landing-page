@@ -3,26 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:links_landing_page/models/links.dart';
 import 'package:provider/provider.dart';
 
-class AddButton extends StatelessWidget {
-  const AddButton({
+class EditButton extends StatelessWidget {
+  const EditButton({
     Key key,
-    this.width,
+    this.data,
   }) : super(key: key);
-  final double width;
+
+  final Link data;
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _urlTextController = TextEditingController();
-    TextEditingController _titleTextController = TextEditingController();
+    TextEditingController _urlTextController = TextEditingController(
+      text: data.url,
+    );
+    TextEditingController _titleTextController = TextEditingController(
+      text: data.title,
+    );
     final linksCollection = Provider.of<CollectionReference>(context);
     final _formKey = GlobalKey<FormState>();
 
-    _displayAddDialog() async {
+    _displayEditDialog() async {
       return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('New Link'),
+            title: Text('Update Link'),
             content: Form(
               key: _formKey,
               child: Column(
@@ -51,14 +56,25 @@ class AddButton extends StatelessWidget {
             ),
             actions: <Widget>[
               FlatButton(
-                child: Text('Insert'),
+                child: Text('Update'),
+                color: Colors.blueAccent,
                 onPressed: () {
+                  final userChangedTitle =
+                      data.title != _titleTextController.text;
+                  final userChangedUrl = data.url != _urlTextController.text;
+                  final userUpdateForm = userChangedTitle || userChangedUrl;
+
                   if (_formKey.currentState.validate()) {
-                    final newLink = Link(
-                      title: _titleTextController.text,
-                      url: _urlTextController.text,
-                    );
-                    linksCollection.add(newLink.toMap());
+                    if (userUpdateForm) {
+                      // If user updates the form field, send a update request to firebase
+                      final newLink = Link(
+                        title: _titleTextController.text,
+                        url: _urlTextController.text,
+                      );
+                      linksCollection
+                          .document(data.documentID)
+                          .updateData(newLink.toMap());
+                    } // Else, it closes the dialog without sending a request
                     Navigator.of(context).pop();
                   }
                 },
@@ -69,20 +85,9 @@ class AddButton extends StatelessWidget {
       );
     }
 
-    return SizedBox(
-      width: width,
-      child: FlatButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        padding: EdgeInsets.symmetric(vertical: 20),
-        color: Colors.greenAccent.shade400,
-        onPressed: _displayAddDialog,
-        child: Text(
-          'Add Button',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
-      ),
+    return IconButton(
+      icon: Icon(Icons.edit),
+      onPressed: _displayEditDialog,
     );
   }
 }
