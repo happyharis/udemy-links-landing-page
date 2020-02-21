@@ -37,7 +37,11 @@ class ButtonSettings extends StatelessWidget {
                 ),
                 child: ReorderableListView(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  onReorder: (int oldIndex, int newIndex) {},
+                  onReorder: (int oldIndex, int newIndex) {
+                    debugPrint(userLinks.elementAt(oldIndex).title);
+                    debugPrint('oldIndex $oldIndex');
+                    debugPrint('newIndex $newIndex');
+                  },
                   children: [
                     for (var data in userLinks)
                       ListTile(
