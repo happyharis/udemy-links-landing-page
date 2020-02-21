@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => LandingPage(),
           '/settings': (context) => SettingsPage(),
           '/login': (context) => AuthView.loginPage(),
+          '/register': (context) => AuthView.registerPage(),
         },
         onUnknownRoute: (settings) => MaterialPageRoute(
           builder: (context) => NotFoundPage(
