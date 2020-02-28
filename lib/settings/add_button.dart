@@ -14,8 +14,8 @@ class AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController _urlTextController = TextEditingController();
     TextEditingController _titleTextController = TextEditingController();
-    final linksCollection = Provider.of<CollectionReference>(context);
     final _formKey = GlobalKey<FormState>();
+    final linksCollection = Provider.of<CollectionReference>(context);
 
     _displayAddDialog() async {
       return showDialog(

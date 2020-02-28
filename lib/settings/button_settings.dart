@@ -22,7 +22,7 @@ class ButtonSettings extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 100),
+                padding: const EdgeInsets.only(top: 60.0, bottom: 100),
                 child: Text(
                   'Your Links',
                   style: Theme.of(context).textTheme.headline1,
@@ -32,7 +32,7 @@ class ButtonSettings extends StatelessWidget {
               SizedBox(height: 30),
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: constraints.maxHeight * 0.5,
+                  maxHeight: constraints.maxHeight * 0.4,
                   maxWidth: constraints.maxWidth * 0.6,
                 ),
                 child: ReorderableListView(
