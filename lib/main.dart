@@ -10,6 +10,7 @@ import 'package:links_landing_page/settings/page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  Provider.debugCheckInvalidValueType = null;
   runApp(MyApp());
 }
 
@@ -18,22 +19,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final linksCollection = Firestore.instance.collection('links');
-    final userLinks = linksCollection.snapshots().map((snapshot) {
-      return snapshot.documents.map((doc) => Link.fromDocument(doc)).toList();
-    });
-
     return MultiProvider(
       providers: [
-        StreamProvider<List<Link>>(
-          create: (_) => userLinks,
-          initialData: [],
-        ),
         StreamProvider<FirebaseUser>(
           create: (_) => FirebaseAuth.instance.onAuthStateChanged,
           initialData: null,
         ),
-        Provider<CollectionReference>(create: (_) => linksCollection),
+        ProxyProvider<FirebaseUser, CollectionReference>(update: (_, user, __) {
+          return linksCollection(user?.uid);
+        }),
+        ProxyProvider<FirebaseUser, Stream<List<Link>>>(update: (_, user, __) {
+          return userLinksCollection(linksCollection(user?.uid));
+        })
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -52,6 +49,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
+userLinksCollection(CollectionReference linksCollection) {
+  if (linksCollection == null) return null;
+  return linksCollection.snapshots().map((snapshot) {
+    return snapshot.documents.map((doc) => Link.fromDocument(doc)).toList();
+  });
+}
+
+CollectionReference linksCollection(String userId) {
+  if (userId == null) return null;
+  return Firestore.instance.collection('users/$userId/links');
+}
+
 class AuthWidget extends StatelessWidget {
   const AuthWidget({Key key, @required this.settingsName}) : super(key: key);
 
@@ -68,7 +77,7 @@ class AuthWidget extends StatelessWidget {
         settingsName == '/login' && !isUserLoggedIn;
 
     if (settingsName == '/') {
-      return LandingPage();
+      return LoginPage();
     } else if (isUserLoggedIn) {
       return SettingsPage();
     } else if (notLoggedInUserGoToLogin || notLoggedInUserGoToSettings) {
