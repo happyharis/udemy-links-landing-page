@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:links_landing_page/helpers/errors.dart';
+import 'package:links_landing_page/helpers/validators.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -29,17 +31,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 25),
                     TextFormField(
                       controller: _emailTextController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter a email';
-                        } else if (!RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(value)) {
-                          return 'Please enter a valid email';
-                        } else {
-                          return null;
-                        }
-                      },
+                      validator: validateEmail,
                       decoration: InputDecoration(
                         labelText: 'Email',
                       ),
@@ -100,39 +92,4 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-}
-
-void showErrorDialog(BuildContext context, error) {
-  showDialog(
-      context: context,
-      child: SimpleDialog(
-        title: Row(
-          children: <Widget>[
-            Icon(
-              Icons.error,
-              color: Colors.redAccent,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'Oh snap!',
-              style: Theme.of(context).textTheme.headline5,
-            )
-          ],
-        ),
-        children: <Widget>[
-          SimpleDialogOption(
-            child: SizedBox(width: 400, child: Text(error.message)),
-          ),
-          SimpleDialogOption(
-            child: FlatButton(
-              child: Text(
-                'Dismiss',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: Navigator.of(context).pop,
-              color: Colors.redAccent,
-            ),
-          )
-        ],
-      ));
 }

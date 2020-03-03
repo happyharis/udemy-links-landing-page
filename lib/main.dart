@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:links_landing_page/landing_page.dart';
+import 'package:links_landing_page/helpers/firestore_service.dart';
 import 'package:links_landing_page/login_page.dart';
 import 'package:links_landing_page/models/links.dart';
+import 'package:links_landing_page/models/users.dart';
 import 'package:links_landing_page/not_found_page.dart';
 import 'package:links_landing_page/register_page.dart';
 import 'package:links_landing_page/settings/page.dart';
@@ -30,7 +31,10 @@ class MyApp extends StatelessWidget {
         }),
         ProxyProvider<FirebaseUser, Stream<List<Link>>>(update: (_, user, __) {
           return userLinksCollection(linksCollection(user?.uid));
-        })
+        }),
+        ProxyProvider<FirebaseUser, Stream<User>>(update: (_, user, __) {
+          return userData(user?.uid);
+        }),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -49,18 +53,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-userLinksCollection(CollectionReference linksCollection) {
-  if (linksCollection == null) return null;
-  return linksCollection.snapshots().map((snapshot) {
-    return snapshot.documents.map((doc) => Link.fromDocument(doc)).toList();
-  });
-}
-
-CollectionReference linksCollection(String userId) {
-  if (userId == null) return null;
-  return Firestore.instance.collection('users/$userId/links');
-}
-
 class AuthWidget extends StatelessWidget {
   const AuthWidget({Key key, @required this.settingsName}) : super(key: key);
 
@@ -74,7 +66,7 @@ class AuthWidget extends StatelessWidget {
     final notLoggedInUserGoToLogin =
         settingsName == '/login' && !isUserLoggedIn;
     final notLoggedInUserGoToRegister =
-        settingsName == '/login' && !isUserLoggedIn;
+        settingsName == '/register' && !isUserLoggedIn;
 
     if (settingsName == '/') {
       return LoginPage();
