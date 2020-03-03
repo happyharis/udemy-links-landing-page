@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:links_landing_page/helpers/errors.dart';
-import 'package:links_landing_page/login_page.dart';
 import 'package:links_landing_page/models/links.dart';
 import 'package:links_landing_page/models/users.dart';
 import 'package:links_landing_page/settings/button_settings.dart';
