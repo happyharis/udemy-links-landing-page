@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:links_landing_page/button_link.dart';
 import 'package:links_landing_page/models/links.dart';
+import 'package:links_landing_page/models/users.dart';
 import 'package:provider/provider.dart';
 
 class LandingPage extends StatelessWidget {
@@ -12,6 +13,7 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userLinks = Provider.of<List<Link>>(context);
+    final user = Provider.of<User>(context);
     return Material(
       color: Colors.transparent,
       child: Container(
@@ -27,7 +29,7 @@ class LandingPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                '@thehappyharis',
+                user.name,
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
