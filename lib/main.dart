@@ -68,10 +68,10 @@ class AuthWidget extends StatelessWidget {
     final notLoggedInUserGoToRegister =
         settingsName == '/register' && !isUserLoggedIn;
 
-    if (settingsName == '/') {
-      return LoginPage();
-    } else if (isUserLoggedIn) {
+    if (isUserLoggedIn) {
       return SettingsPage();
+    } else if (settingsName == '/' && !isUserLoggedIn) {
+      return LoginPage();
     } else if (notLoggedInUserGoToLogin || notLoggedInUserGoToSettings) {
       return LoginPage();
     } else if (notLoggedInUserGoToRegister) {
