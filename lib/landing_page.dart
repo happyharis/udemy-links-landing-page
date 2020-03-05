@@ -1,11 +1,11 @@
-import 'dart:html';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:links_landing_page/button_link.dart';
 import 'package:links_landing_page/helpers/upload.dart';
 import 'package:links_landing_page/models/links.dart';
 import 'package:links_landing_page/models/users.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase/firebase.dart' as fb;
 
 class LandingPage extends StatelessWidget {
   LandingPage({
@@ -25,8 +25,33 @@ class LandingPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             SizedBox(height: 35),
-            ProfilePicture(user: user),
-            UpdatePictureButton(),
+            ProfilePicture(),
+            OutlineButton(
+              borderSide: BorderSide(width: 2),
+              child: Text('Update Profile Picture'),
+              onPressed: () {
+                return uploadImage(onSelected: (file) {
+                  final userId = user.id;
+                  final dateTime = DateTime.now();
+                  final path = 'user_profiles/$userId-$dateTime';
+                  fb
+                      .storage()
+                      .refFromURL('gs://links-landing-page.appspot.com')
+                      .child(path)
+                      .put(file);
+                  if (user.profilePicture != null) {
+                    fb
+                        .storage()
+                        .refFromURL('gs://links-landing-page.appspot.com')
+                        .child(user.profilePicture)
+                        .delete();
+                  }
+                  Firestore.instance.document('users/$userId').setData(
+                      {'profile_picture': path},
+                      merge: true).catchError(print);
+                });
+              },
+            ),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
@@ -70,55 +95,37 @@ class LandingPage extends StatelessWidget {
 class ProfilePicture extends StatelessWidget {
   const ProfilePicture({
     Key key,
-    @required this.user,
   }) : super(key: key);
-
-  final User user;
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
+
     return SizedBox(
       height: 96,
       width: 96,
-      child: StreamBuilder<Uri>(
-          stream: getUrl(user),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
-            return Image.network(
-              snapshot.data.toString(),
-              height: 96,
-              width: 96,
-            );
-          }),
+      child: user.profilePicture == null
+          ? Icon(Icons.people, size: 96)
+          : StreamBuilder<Uri>(
+              stream: Stream.fromFuture(buildDownloadURL(user)),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return Image.network(
+                  snapshot?.data?.toString(),
+                  height: 96,
+                  width: 96,
+                );
+              }),
     );
   }
-}
 
-class UpdatePictureButton extends StatefulWidget {
-  const UpdatePictureButton({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _UpdatePictureButtonState createState() => _UpdatePictureButtonState();
-}
-
-class _UpdatePictureButtonState extends State<UpdatePictureButton> {
-  @override
-  Widget build(BuildContext context) {
-    final userId = Provider.of<User>(context).id;
-
-    return Tooltip(
-      message: 'Update Profile Picture',
-      child: OutlineButton(
-        borderSide: BorderSide(width: 2),
-        child: Text('Update Profile Picture'),
-        onPressed: () {
-          uploadImage(onSelected: (file) => uploadToFirebase(file, userId));
-        },
-      ),
-    );
+  Future<Uri> buildDownloadURL(User user) {
+    return fb
+        .storage()
+        .refFromURL('gs://links-landing-page.appspot.com')
+        .child(user.profilePicture)
+        .getDownloadURL();
   }
 }

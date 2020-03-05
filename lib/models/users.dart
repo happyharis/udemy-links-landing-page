@@ -18,10 +18,9 @@ class User {
     if (document == null || document.data == null) return null;
 
     return User(
-      name: document.data['name'],
-      profilePicture: document.data['profile_picture'],
-      id: document.documentID,
-    );
+        name: document.data['name'],
+        id: document.documentID,
+        profilePicture: document.data['profile_picture']);
   }
 
   @override

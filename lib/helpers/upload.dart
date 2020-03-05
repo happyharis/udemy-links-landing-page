@@ -1,9 +1,6 @@
 import 'dart:html';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase/firebase.dart' as fb;
-import 'package:links_landing_page/models/users.dart';
 
 /// A "select file/folder" window will appear. User will have to choose a file.
 /// This file will be then read, and uploaded to firebase storage;
@@ -36,41 +33,4 @@ uploadImage({@required Function(File) onSelected}) async {
       );
     },
   );
-}
-
-uploadToFirebase(File imageFile, String userId) async {
-  final dateNow = DateTime.now();
-  final filePath = 'profile_pictures/$userId-$dateNow.png';
-
-  fb
-      .storage()
-      .refFromURL('gs://links-landing-page.appspot.com')
-      .child(filePath)
-      .put(imageFile);
-
-  updateProfilePictureUrl(userId, filePath);
-}
-
-void removeOldProfilePicture(String oldPictureUrl) {
-  fb
-      .storage()
-      .refFromURL('gs://links-landing-page.appspot.com')
-      .child(oldPictureUrl)
-      .delete();
-}
-
-void updateProfilePictureUrl(String userId, String profilePictureUrl) {
-  Firestore.instance
-      .document('users/$userId')
-      .setData({'profile_picture': profilePictureUrl}, merge: true);
-}
-
-Stream<Uri> getUrl(User user) async* {
-  final userProfilePicture = fb
-      .storage()
-      .refFromURL('gs://links-landing-page.appspot.com')
-      .child(user.profilePicture)
-      .getDownloadURL();
-
-  yield* Stream.fromFuture(userProfilePicture);
 }

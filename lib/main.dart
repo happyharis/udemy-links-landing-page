@@ -70,7 +70,7 @@ class AuthWidget extends StatelessWidget {
 
     if (isUserLoggedIn) {
       return SettingsPage();
-    } else if (settingsName == '/' && !isUserLoggedIn) {
+    } else if (settingsName == '/') {
       return LoginPage();
     } else if (notLoggedInUserGoToLogin || notLoggedInUserGoToSettings) {
       return LoginPage();
