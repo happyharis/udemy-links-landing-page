@@ -5,7 +5,7 @@ import 'package:links_landing_page/helpers/firestore_service.dart';
 import 'package:links_landing_page/login_page.dart';
 import 'package:links_landing_page/models/links.dart';
 import 'package:links_landing_page/models/users.dart';
-import 'package:links_landing_page/not_found_page.dart';
+import 'package:links_landing_page/public_landing_page.dart';
 import 'package:links_landing_page/register_page.dart';
 import 'package:links_landing_page/settings/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +77,7 @@ class AuthWidget extends StatelessWidget {
     } else if (notLoggedInUserGoToRegister) {
       return RegisterPage();
     } else {
-      return NotFoundPage(routeName: settingsName);
+      return PublicLandingPage(routeName: settingsName);
     }
   }
 }

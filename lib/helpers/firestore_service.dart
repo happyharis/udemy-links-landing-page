@@ -8,7 +8,7 @@ Stream<User> userData(String uid) {
   });
 }
 
-userLinksCollection(CollectionReference linksCollection) {
+Stream<List<Link>> userLinksCollection(CollectionReference linksCollection) {
   if (linksCollection == null) return null;
   return linksCollection.snapshots().map((snapshot) {
     return snapshot.documents.map((doc) => Link.fromDocument(doc)).toList();

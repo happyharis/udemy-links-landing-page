@@ -35,7 +35,7 @@ class PhonePreview extends StatelessWidget {
                   )
                 ],
               ),
-              child: LandingPage(
+              child: LandingPage.preview(
                 boxDecoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(width: 10),

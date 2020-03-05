@@ -10,12 +10,13 @@ class RegisterPage extends StatelessWidget {
     TextEditingController _emailTextController = TextEditingController();
     TextEditingController _passwordTextController = TextEditingController();
     TextEditingController _nameTextController = TextEditingController();
+    TextEditingController _namePathTextController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade100,
       body: Center(
         child: SizedBox(
-          height: 450,
+          height: 530,
           width: 400,
           child: Material(
             elevation: 2,
@@ -38,6 +39,25 @@ class RegisterPage extends StatelessWidget {
                       decoration: InputDecoration(
                         labelText: 'Name',
                       ),
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('links-landing-page.firebaseapp.com/'),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _namePathTextController,
+                            validator: (value) =>
+                                value.isEmpty ? 'Please enter a path' : null,
+                            decoration: InputDecoration(
+                              hintText: ' Your Path',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 15),
                     TextFormField(
@@ -80,6 +100,7 @@ class RegisterPage extends StatelessWidget {
                               final email = _emailTextController.text;
                               final password = _passwordTextController.text;
                               final name = _nameTextController.text;
+                              final namePath = _namePathTextController.text;
                               final firebaseAuth = FirebaseAuth.instance;
                               firebaseAuth
                                   .createUserWithEmailAndPassword(
@@ -93,6 +114,7 @@ class RegisterPage extends StatelessWidget {
                                     .setData({
                                   'name': name,
                                   'profile_picture': '',
+                                  'name_path': namePath
                                 });
                                 Navigator.of(context).pushNamed('/settings');
                               }).catchError((error) =>

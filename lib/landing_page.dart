@@ -11,8 +11,23 @@ class LandingPage extends StatelessWidget {
   LandingPage({
     Key key,
     this.boxDecoration,
+    this.isPreview,
   }) : super(key: key);
+
+  LandingPage.public({
+    Key key,
+    this.boxDecoration,
+    this.isPreview = false,
+  }) : super(key: key);
+
+  LandingPage.preview({
+    Key key,
+    this.boxDecoration,
+    this.isPreview = true,
+  }) : super(key: key);
+
   final Decoration boxDecoration;
+  final bool isPreview;
   @override
   Widget build(BuildContext context) {
     final userLinks = Provider.of<List<Link>>(context);
@@ -26,7 +41,7 @@ class LandingPage extends StatelessWidget {
           children: <Widget>[
             SizedBox(height: 35),
             ProfilePicture(),
-            EditProfileButton(),
+            if (isPreview) EditProfileButton(),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
@@ -82,19 +97,24 @@ class EditProfileButton extends StatelessWidget {
       onPressed: () {
         return uploadImage(onSelected: (file) {
           final userId = user.id;
+          print(userId);
           final dateTime = DateTime.now();
           final path = 'user_profiles/$userId-$dateTime';
-          fb
-              .storage()
-              .refFromURL('gs://links-landing-page.appspot.com')
-              .child(path)
-              .put(file);
-          if (user.profilePicture != null) {
+          try {
             fb
                 .storage()
                 .refFromURL('gs://links-landing-page.appspot.com')
-                .child(user.profilePicture)
-                .delete();
+                .child(path)
+                .put(file);
+            if (user.profilePicture != null || user.profilePicture.isEmpty) {
+              fb
+                  .storage()
+                  .refFromURL('gs://links-landing-page.appspot.com')
+                  .child(user.profilePicture)
+                  .delete();
+            }
+          } catch (e) {
+            print(e.message);
           }
           Firestore.instance.document('users/$userId').setData(
               {'profile_picture': path},
@@ -117,7 +137,7 @@ class ProfilePicture extends StatelessWidget {
     return SizedBox(
       height: 96,
       width: 96,
-      child: user.profilePicture == null
+      child: user.profilePicture.isEmpty || user?.profilePicture == null
           ? Icon(Icons.people, size: 96)
           : StreamBuilder<Uri>(
               stream: Stream.fromFuture(buildDownloadURL(user)),
