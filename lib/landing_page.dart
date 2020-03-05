@@ -26,32 +26,7 @@ class LandingPage extends StatelessWidget {
           children: <Widget>[
             SizedBox(height: 35),
             ProfilePicture(),
-            OutlineButton(
-              borderSide: BorderSide(width: 2),
-              child: Text('Update Profile Picture'),
-              onPressed: () {
-                return uploadImage(onSelected: (file) {
-                  final userId = user.id;
-                  final dateTime = DateTime.now();
-                  final path = 'user_profiles/$userId-$dateTime';
-                  fb
-                      .storage()
-                      .refFromURL('gs://links-landing-page.appspot.com')
-                      .child(path)
-                      .put(file);
-                  if (user.profilePicture != null) {
-                    fb
-                        .storage()
-                        .refFromURL('gs://links-landing-page.appspot.com')
-                        .child(user.profilePicture)
-                        .delete();
-                  }
-                  Firestore.instance.document('users/$userId').setData(
-                      {'profile_picture': path},
-                      merge: true).catchError(print);
-                });
-              },
-            ),
+            EditProfileButton(),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
@@ -88,6 +63,44 @@ class LandingPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class EditProfileButton extends StatelessWidget {
+  const EditProfileButton({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
+
+    return OutlineButton(
+      borderSide: BorderSide(width: 2),
+      child: Text('Update Profile Picture'),
+      onPressed: () {
+        return uploadImage(onSelected: (file) {
+          final userId = user.id;
+          final dateTime = DateTime.now();
+          final path = 'user_profiles/$userId-$dateTime';
+          fb
+              .storage()
+              .refFromURL('gs://links-landing-page.appspot.com')
+              .child(path)
+              .put(file);
+          if (user.profilePicture != null) {
+            fb
+                .storage()
+                .refFromURL('gs://links-landing-page.appspot.com')
+                .child(user.profilePicture)
+                .delete();
+          }
+          Firestore.instance.document('users/$userId').setData(
+              {'profile_picture': path},
+              merge: true).catchError(print);
+        });
+      },
     );
   }
 }
