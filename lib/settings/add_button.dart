@@ -59,7 +59,6 @@ class AddButton extends StatelessWidget {
                       url: _urlTextController.text,
                     );
                     linksCollection.add(newLink.toMap());
-                    linksCollection.where('title', isEqualTo: 'Youtube');
                     Navigator.of(context).pop();
                   }
                 },
