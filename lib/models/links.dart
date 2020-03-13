@@ -4,17 +4,22 @@ class Link {
   final String url;
   final String title;
   final String documentID;
+  final int position;
+  final DocumentReference documentReference;
 
   Link({
     this.url,
     this.title,
     this.documentID,
+    this.position,
+    this.documentReference,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'url': url,
       'title': title,
+      'position': position,
     };
   }
 
@@ -25,11 +30,13 @@ class Link {
       documentID: document.documentID,
       url: document.data['url'],
       title: document.data['title'],
+      position: document.data['position'],
+      documentReference: document.reference,
     );
   }
 
   @override
-  String toString() => 'Link url: $url, title: $title';
+  String toString() => 'Link url: $url, title: $title, position: $position';
 
   @override
   bool operator ==(Object o) {

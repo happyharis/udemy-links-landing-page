@@ -10,7 +10,10 @@ Stream<User> userData(String uid) {
 
 userLinksCollection(CollectionReference linksCollection) {
   if (linksCollection == null) return null;
-  return linksCollection.snapshots().map((snapshot) {
+  return linksCollection
+      .orderBy('position', descending: false)
+      .snapshots()
+      .map((snapshot) {
     return snapshot.documents.map((doc) => Link.fromDocument(doc)).toList();
   });
 }
