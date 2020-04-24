@@ -8,7 +8,7 @@ Stream<User> userData(String uid) {
   });
 }
 
-userLinksCollection(CollectionReference linksCollection) {
+Stream<List<Link>> userLinksCollection(CollectionReference linksCollection) {
   if (linksCollection == null) return null;
   return linksCollection
       .orderBy('position', descending: false)
